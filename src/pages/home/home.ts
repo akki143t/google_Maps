@@ -12,6 +12,7 @@ import {
     GoogleMap,
     LatLng,
     GoogleMapsEvent,
+    GoogleMapOptions
 } from '@ionic-native/google-maps';
 import {
     LocationProvider
@@ -45,9 +46,29 @@ export class HomePage {
     private map: GoogleMap;
     private location: LatLng;
     private infoWindowTitle: any;
+    private mapOptions: GoogleMapOptions;
     constructor(private platform: Platform,
         private googleMaps: GoogleMaps, private locationProvider: LocationProvider, private spinnerUtil: SpinnerUtilProvider, public googlePlaces: GooglePlacesProvider, private nativeGeocoder: NativeGeocoder) {
         this.location = new LatLng(42.346903, -71.135101);
+        this.mapOptions = {
+
+              controls: {
+                'compass': true,
+                'myLocationButton': true,
+                'myLocation': true,   // (blue dot)
+                'indoorPicker': true,
+                'zoom': true,          // android only
+                'mapToolbar': true     // android only
+              },
+
+              gestures: {
+                scroll: true,
+                tilt: true,
+                zoom: true,
+                rotate: true
+              },
+         
+        }
     }
 
     ionViewDidLoad() {
@@ -77,13 +98,14 @@ export class HomePage {
     initMap() {
 
         let element = this.mapElement.nativeElement;
-        this.map = this.googleMaps.create(element);
+        this.map = this.googleMaps.create(element,this.mapOptions);
 
         this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
-            this.locateMapCamera();
-            setTimeout(() => {
-                this.addMarker()
-            }, 1000);
+    this.addMapCircle();
+         //   this.locateMapCamera();
+//            setTimeout(() => {
+//                this.addMarker()
+//            }, 1000);
         });
 
         this.map.on(GoogleMapsEvent.MAP_CLICK).subscribe(
@@ -91,7 +113,9 @@ export class HomePage {
                 this.location.lat = data[0].lat;
                 this.location.lng = data[0].lng;
                 this.infoWindowTitle = "";
-                this.locateMapCamera();
+                this.addMapCircle();
+                
+              //  this.locateMapCamera();
 
             }
         );
@@ -116,6 +140,32 @@ export class HomePage {
         })
 
     }
+    
+addMapCircle(){
+    
+    this.map.addCircle({
+            'center': this.location,
+            'radius': 300,
+            'strokeColor' : '#AA00FF',
+            'strokeWidth': 5,
+            'fillColor' : '#880000'
+        }).then(circle =>{
+    
+              let options = {
+                  target: circle.getBounds(),
+                zoom: 8
+            };
+
+            this.map.moveCamera(options);
+           // this.addMarker();
+           this.getLocationTitle();
+            
+        });
+
+
+    
+}
+    
 
     onAutoComplete(event: any) {
         this.spinnerUtil.initializeLoader();
@@ -125,7 +175,7 @@ export class HomePage {
                 this.location.lng = data['geometry'].location.lng;
 
             }
-            this.locateMapCamera();
+            this.addMapCircle();
 
             this.spinnerUtil.dismissLoader();
         });
@@ -133,7 +183,7 @@ export class HomePage {
     }
 
 
-    locateMapCamera() {
+locateMapCamera(circle:any) {
 
         let options = {
             target: this.location,
