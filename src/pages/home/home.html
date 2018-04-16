@@ -2,12 +2,7 @@
   <ion-navbar>
     <ion-title>
 AppTad Maps    </ion-title>
-      <ion-buttons end>
-      <button ion-button icon-only (click)='onAutoComplete()'>
-        <ion-icon name="search"></ion-icon>
-      </button>
-      
-    </ion-buttons>
+    
   </ion-navbar>
 </ion-header>
 
@@ -20,11 +15,7 @@ AppTad Maps    </ion-title>
    
 
     <div id="map" #map>
-<!--
-        <ng-template #withFlags let-attrs="attrs">
-          <span [innerHTML]="attrs.data.description | boldprefix:attrs.keyword" (click)="selectLocation($event, attrs.data)"></span>
-        </ng-template>
--->
-       <ion-auto-complete [dataProvider]="googlePlaces" [options]="{ placeholder : 'Search Places' }" (itemSelected)="onAutoComplete($event)"  [useIonInput]="true" ></ion-auto-complete></div>
+
+       <ion-auto-complete [dataProvider]="googlePlaces"  [(ngModel)]="infoWindowTitle"  [options]="{ placeholder : 'Search Places' }" (itemSelected)="onAutoComplete($event)" #searchbar ></ion-auto-complete></div>
   </div>
 </ion-content>

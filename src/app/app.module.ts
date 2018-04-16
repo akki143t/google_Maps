@@ -13,6 +13,8 @@ import { LocationProvider } from '../providers/location/location';
 import { SpinnerUtilProvider } from '../providers/spinner-util/spinner-util';
 import { AutoCompleteModule } from 'ionic2-auto-complete';
 import { GooglePlacesProvider } from '../providers/google-places/google-places';
+import { Constants } from '../providers/google-places/constant';
+
 import { NativeGeocoder } from '@ionic-native/native-geocoder';
 
 @NgModule({
@@ -40,7 +42,8 @@ import { NativeGeocoder } from '@ionic-native/native-geocoder';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     LocationProvider,
     SpinnerUtilProvider,
-    GooglePlacesProvider
+    GooglePlacesProvider,
+      Constants
     
   ]
 })
