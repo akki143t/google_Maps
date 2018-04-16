@@ -52,22 +52,22 @@ export class HomePage {
         this.location = new LatLng(42.346903, -71.135101);
         this.mapOptions = {
 
-              controls: {
+            controls: {
                 'compass': true,
                 'myLocationButton': true,
-                'myLocation': true,   // (blue dot)
+                'myLocation': true, // (blue dot)
                 'indoorPicker': true,
-                'zoom': true,          // android only
-                'mapToolbar': true     // android only
-              },
+                'zoom': true, // android only
+                'mapToolbar': true // android only
+            },
 
-              gestures: {
+            gestures: {
                 scroll: true,
                 tilt: true,
                 zoom: true,
                 rotate: true
-              },
-         
+            },
+
         }
     }
 
@@ -88,7 +88,7 @@ export class HomePage {
             this.spinnerUtil.dismissLoader();
         }).catch((error) => {
             console.log('Error getting location', error);
-           // this.initMap();
+            // this.initMap();
             this.spinnerUtil.dismissLoader();
         });
 
@@ -98,14 +98,11 @@ export class HomePage {
     initMap() {
 
         let element = this.mapElement.nativeElement;
-        this.map = this.googleMaps.create(element,this.mapOptions);
+        this.map = this.googleMaps.create(element, this.mapOptions);
 
         this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
-    this.addMapCircle();
-         //   this.locateMapCamera();
-//            setTimeout(() => {
-//                this.addMarker()
-//            }, 1000);
+            this.locateMapCamera();
+
         });
 
         this.map.on(GoogleMapsEvent.MAP_CLICK).subscribe(
@@ -113,9 +110,7 @@ export class HomePage {
                 this.location.lat = data[0].lat;
                 this.location.lng = data[0].lng;
                 this.infoWindowTitle = "";
-                this.addMapCircle();
-                
-              //  this.locateMapCamera();
+                this.locateMapCamera();
 
             }
         );
@@ -134,38 +129,35 @@ export class HomePage {
                     lng: this.location.lng
                 }
             }).then(marker => {
-
+                this.addMapCircle();
             });
 
         })
 
     }
-    
-addMapCircle(){
-    
-    this.map.addCircle({
+
+    addMapCircle() {
+
+        this.map.addCircle({
             'center': this.location,
-            'radius': 300,
-            'strokeColor' : '#AA00FF',
+            'radius': 500,
+            'strokeColor': '#AA00FF',
             'strokeWidth': 5,
-            'fillColor' : '#880000'
-        }).then(circle =>{
-    
-              let options = {
-                  target: circle.getBounds(),
-                zoom: 8
+            'fillColor': '#880000'
+        }).then(circle => {
+
+            let options = {
+                target: circle.getBounds(),
+                zoom: 18
             };
 
             this.map.moveCamera(options);
-           // this.addMarker();
-           this.getLocationTitle();
-            
         });
 
 
-    
-}
-    
+
+    }
+
 
     onAutoComplete(event: any) {
         this.spinnerUtil.initializeLoader();
@@ -175,7 +167,7 @@ addMapCircle(){
                 this.location.lng = data['geometry'].location.lng;
 
             }
-            this.addMapCircle();
+            this.locateMapCamera();
 
             this.spinnerUtil.dismissLoader();
         });
@@ -183,7 +175,7 @@ addMapCircle(){
     }
 
 
-locateMapCamera(circle:any) {
+    locateMapCamera() {
 
         let options = {
             target: this.location,
@@ -203,8 +195,8 @@ locateMapCamera(circle:any) {
                 this.infoWindowTitle = (res['subLocality'] + "," + res['locality'] + "," + res['administrativeArea'] + "," + res['countryName']).replace(/undefined,/g, '');
                 this.searchbar.writeValue(this.infoWindowTitle);
                 this.searchbar.searchbarElem.value = this.infoWindowTitle;
-
                 this.addMarker();
+
             })
             .catch((error: any) => console.log(error));
 
